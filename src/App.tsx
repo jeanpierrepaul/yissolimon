@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AvisParent } from './pages/avis';
-import { ChoixGarderie } from './pages/choixgarderie';
+import { ChoixGarderie, garderieParent } from './pages/choixgarderie';
+import { InviterInstallation, estInstallee } from './components/installer';
 import { Cadre, Chargement } from './components/ui';
 import { SessionProvider, useSession } from './lib/session';
 import { AccueilAccompagnateur, Bibliotheque, Compte, Connexion, Coordination, FichePage, GarderieAccompagnee } from './pages/autres';
@@ -19,6 +20,8 @@ function Routeur() {
   if (pathname.startsWith('/avis/')) return <Routes><Route path="/avis/:code" element={<AvisParent />} /></Routes>;
   if (pathname === '/parents') return <Routes><Route path="/parents" element={<ChoixGarderie />} /></Routes>;
   if (chargement || demarrage) return <Chargement />;
+  // Appli installée par un parent : elle s'ouvre directement sur l'espace de sa garderie.
+  if (!profil && pathname === '/' && estInstallee() && garderieParent()) return <Navigate to={`/avis/${garderieParent()!.code}`} replace />;
   if (!profil) return <Connexion />;
   const accueil = profil.role === 'responsable' ? <AccueilResponsable />
     : profil.role === 'accompagnateur' ? <AccueilAccompagnateur /> : <Coordination />;
@@ -48,5 +51,5 @@ function Routeur() {
 }
 
 export default function App() {
-  return <SessionProvider><BrowserRouter><Routeur /></BrowserRouter></SessionProvider>;
+  return <SessionProvider><BrowserRouter><Routeur /><InviterInstallation /></BrowserRouter></SessionProvider>;
 }
