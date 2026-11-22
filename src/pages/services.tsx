@@ -9,7 +9,7 @@ import { Chargement, Titre, dateFr, useEnLigne } from '../components/ui';
 import { ProposerService, ServicesAVerifier } from './servicesproposes';
 
 export const TYPES: Record<TypeService, string> = {
-  sante: 'Santé', nutrition: 'Nutrition', social: 'Social', protection: 'Protection', etat_civil: 'État civil', education: 'Préscolaire',
+  sante: 'Santé', nutrition: 'Nutrition', social: 'Social', protection: 'Protection', etat_civil: 'État civil', education: 'Préscolaire', loisirs: 'Loisirs et sorties',
 };
 export const BESOINS: Record<Besoin, string> = {
   sante: 'Santé / maladie', vaccination: 'Vaccination', nutrition: 'Nutrition / croissance', developpement: 'Développement (langage, motricité)',
@@ -17,7 +17,7 @@ export const BESOINS: Record<Besoin, string> = {
 };
 // Besoin proposé par défaut selon le type de service.
 const BESOIN_DEFAUT: Record<TypeService, Besoin> = {
-  sante: 'sante', nutrition: 'nutrition', social: 'social', protection: 'protection', etat_civil: 'etat_civil', education: 'developpement',
+  sante: 'sante', nutrition: 'nutrition', social: 'social', protection: 'protection', etat_civil: 'etat_civil', education: 'developpement', loisirs: 'developpement',
 };
 
 function FormService({ s, fermer, commune }: { s: Partial<Service>; fermer: () => void; commune?: string }) {
@@ -90,7 +90,7 @@ export function Annuaire() {
   return (
     <>
       <Titre sur={services[0]?.commune ?? 'Commune'}>Services de la commune</Titre>
-      <p className="chapo-petit">Pour orienter une famille vers le bon service : santé, nutrition, protection, état civil, aide sociale. La garderie ne remplace pas ces services, elle fait le lien.</p>
+      <p className="chapo-petit">Pour orienter une famille vers le bon service : santé, nutrition, protection, état civil, aide sociale. La garderie ne remplace pas ces services, elle fait le lien. Les lieux de loisirs donnent aussi des idées de sorties aux familles.</p>
       {fait && <p className="succes" role="status">{fait}</p>}
       {profil?.role === 'coordination' && <ServicesAVerifier />}
       {responsable && <ProposerService />}
@@ -126,7 +126,7 @@ export function Annuaire() {
                   </ul>
                   <div className="service-pied">
                     {s.telephone && <a className="bouton petit" href={`tel:${s.telephone.replace(/\s/g, '')}`}><Icone nom="telephone" taille={16} /> Appeler</a>}
-                    {responsable && <button className="bouton petit secondaire" onClick={() => { setOrienter(orienter === s.id ? null : s.id); setBesoin(BESOIN_DEFAUT[s.type]); setFait(null); }}>Orienter une famille</button>}
+                    {responsable && s.type !== 'loisirs' && <button className="bouton petit secondaire" onClick={() => { setOrienter(orienter === s.id ? null : s.id); setBesoin(BESOIN_DEFAUT[s.type]); setFait(null); }}>Orienter une famille</button>}
                     {gestion && enLigne && <button className="lien" onClick={() => setEdition(s)}>Modifier</button>}
                   </div>
                   {orienter === s.id && (

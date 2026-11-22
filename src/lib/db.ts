@@ -24,7 +24,7 @@ export interface Note {
   texte: string; supprime: boolean; updated_at: string; _sale?: 0 | 1;
 }
 
-export type TypeService = 'sante' | 'nutrition' | 'social' | 'protection' | 'etat_civil' | 'education';
+export type TypeService = 'sante' | 'nutrition' | 'social' | 'protection' | 'etat_civil' | 'education' | 'loisirs';
 export interface Service {
   id: string; commune: string; nom: string; type: TypeService; adresse: string | null;
   telephone: string | null; horaires: string | null; description: string | null; actif: boolean; updated_at: string;

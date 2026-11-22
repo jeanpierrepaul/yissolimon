@@ -23,7 +23,7 @@ export function AvisParent() {
   const [rep, setRep] = useState<(number | null)[]>(QUESTIONS_AVIS.map(() => null));
   const [etat, setEtat] = useState<'saisie' | 'envoi' | 'merci' | 'deja'>(lire(cleDeja(code)) ? 'deja' : 'saisie');
   const [erreur, setErreur] = useState<string | null>(null);
-  const [onglet, setOnglet] = useState<'services' | 'avis'>(etat === 'deja' ? 'services' : 'avis');
+  const [onglet, setOnglet] = useState<'services' | 'loisirs' | 'avis'>(etat === 'deja' ? 'services' : 'avis');
   const [remarque, setRemarque] = useState('');
 
   useEffect(() => {
@@ -56,15 +56,16 @@ export function AvisParent() {
             <div className="hero-texte">
               <p className="sur">{nom ?? (enLigne ? 'Chargement…' : 'Hors connexion')}</p>
               <h1>Bienvenue, chers parents !</h1>
-              <p>Trouvez les services utiles pour votre enfant près de chez vous, et donnez votre avis sur la garderie. <strong>Sans compte et sans donner votre nom.</strong></p>
+              <p>Trouvez les services utiles pour votre enfant, des idées de sorties en famille près de chez vous, et donnez votre avis sur la garderie. <strong>Sans compte et sans donner votre nom.</strong></p>
             </div>
             <Mascotte taille={130} pose="salut" className="hero-mascotte" />
           </section>
           <div className="onglets" role="tablist">
-            <button role="tab" id="onglet-services" aria-selected={onglet === 'services'} className={onglet === 'services' ? 'choisi' : ''} onClick={() => setOnglet('services')}>Services pour mon enfant</button>
-            <button role="tab" id="onglet-avis" aria-selected={onglet === 'avis'} className={onglet === 'avis' ? 'choisi' : ''} onClick={() => setOnglet('avis')}>Donner mon avis</button>
+            <button role="tab" id="onglet-services" aria-selected={onglet === 'services'} className={onglet === 'services' ? 'choisi' : ''} onClick={() => setOnglet('services')}>Services</button>
+            <button role="tab" id="onglet-loisirs" aria-selected={onglet === 'loisirs'} className={onglet === 'loisirs' ? 'choisi' : ''} onClick={() => setOnglet('loisirs')}>Sorties et loisirs</button>
+            <button role="tab" id="onglet-avis" aria-selected={onglet === 'avis'} className={onglet === 'avis' ? 'choisi' : ''} onClick={() => setOnglet('avis')}>Mon avis</button>
           </div>
-          {onglet === 'services' ? <ServicesParents code={code} /> : etat === 'merci' || etat === 'deja' ? (
+          {onglet !== 'avis' ? <ServicesParents code={code} loisirs={onglet === 'loisirs'} /> : etat === 'merci' || etat === 'deja' ? (
           <div className="merci"><Mascotte taille={150} pose="bravo" className="centre" /><h1>Merci !</h1>
             <p>{etat === 'merci' ? 'Votre avis a bien été envoyé.' : 'Vous avez déjà donné votre avis depuis ce téléphone.'} Il aide l’équipe de la garderie à s’améliorer.</p>
             <div className="boutons-merci">
@@ -105,7 +106,7 @@ export function AvisParent() {
 interface ServicePublic { nom: string; type: TypeService; adresse: string | null; telephone: string | null; horaires: string | null; description: string | null }
 
 /** Services liés à l'enfance dans la commune de la garderie (vue parents, publique). */
-function ServicesParents({ code }: { code: string }) {
+function ServicesParents({ code, loisirs }: { code: string; loisirs: boolean }) {
   const enLigne = useEnLigne();
   const [liste, setListe] = useState<ServicePublic[] | null>(null);
   const [type, setType] = useState('');
@@ -114,17 +115,18 @@ function ServicesParents({ code }: { code: string }) {
     void supabase.rpc('services_parents', { p_code: code }).then(({ data }) => setListe((data as ServicePublic[]) ?? []));
   }, [code, enLigne]);
   if (!liste) return <p className="vide">{enLigne ? 'Chargement des services…' : 'Connectez-vous à internet pour voir les services.'}</p>;
-  if (!liste.length) return <p className="vide">Aucun service n’est encore enregistré pour votre commune. Demandez conseil à la garderie.</p>;
-  const tries = [...liste].sort((a, b) => rangService(a.type) - rangService(b.type) || a.nom.localeCompare(b.nom));
+  const choisis = liste.filter((s) => (s.type === 'loisirs') === loisirs);
+  if (!choisis.length) return <p className="vide">{loisirs ? 'Aucun lieu de loisirs n’est encore enregistré pour votre commune.' : 'Aucun service n’est encore enregistré pour votre commune.'} Demandez conseil à la garderie.</p>;
+  const tries = [...choisis].sort((a, b) => rangService(a.type) - rangService(b.type) || a.nom.localeCompare(b.nom));
   const types = [...new Set(tries.map((s) => s.type))];
   const visibles = tries.filter((s) => !type || s.type === type);
   return (
     <>
-      <p>Les services publics pour la santé, la croissance, la protection et les papiers de votre enfant, près de chez vous.</p>
-      <div className="filtres">
+      <p>{loisirs ? 'Des lieux pour jouer, découvrir et s’épanouir en famille, près de chez vous. Jouer dehors, écouter des histoires, faire de la musique : tout cela aide votre enfant à grandir.' : 'Les services publics pour la santé, la croissance, la protection et les papiers de votre enfant, près de chez vous.'}</p>
+      {!loisirs && <div className="filtres">
         <button className={!type ? 'choisi' : ''} onClick={() => setType('')}>Tous</button>
         {types.map((t) => <button key={t} className={type === t ? 'choisi' : ''} onClick={() => setType(t)}>{TYPES[t]}</button>)}
-      </div>
+      </div>}
       <ul className="grille-fiches">
         {visibles.map((s, i) => {
           const { c } = couleurService(s.type);
@@ -142,7 +144,7 @@ function ServicesParents({ code }: { code: string }) {
           );
         })}
       </ul>
-      <p className="legende">En cas d’urgence pour un enfant, rendez-vous directement au centre de santé le plus proche.</p>
+      <p className="legende">{loisirs ? 'Restez toujours avec votre enfant pendant les sorties.' : 'En cas d’urgence pour un enfant, rendez-vous directement au centre de santé le plus proche.'}</p>
     </>
   );
 }

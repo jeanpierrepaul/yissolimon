@@ -14,7 +14,7 @@ interface Export {
 }
 
 const STATUT: Record<string, string> = { a_faire: 'À faire', en_cours: 'En cours', terminee: 'Terminée' };
-const TYPE: Record<string, string> = { sante: 'Santé', nutrition: 'Nutrition', social: 'Social', protection: 'Protection', etat_civil: 'État civil', education: 'Préscolaire' };
+const TYPE: Record<string, string> = { sante: 'Santé', nutrition: 'Nutrition', social: 'Social', protection: 'Protection', etat_civil: 'État civil', education: 'Préscolaire', loisirs: 'Loisirs et sorties' };
 const BESOIN: Record<string, string> = {
   sante: 'Santé / maladie', vaccination: 'Vaccination', nutrition: 'Nutrition / croissance', developpement: 'Développement',
   protection: 'Protection de l’enfant', etat_civil: 'Acte de naissance', social: 'Difficulté sociale', autre: 'Autre',
