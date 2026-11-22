@@ -1,0 +1,10 @@
+# Jamais envoyé à Vercel : secrets et fichiers inutiles au site
+.env
+.env.*
+*.local
+supabase/
+scripts/
+node_modules/
+dist/
+livrables/
+*.zip

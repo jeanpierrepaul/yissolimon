@@ -1,0 +1,25 @@
+# Garde la base Supabase en ligne active : un appel chaque jour à 6 h (heure de Lomé = UTC).
+# Secrets à créer dans GitHub (Settings > Secrets and variables > Actions) :
+#   SUPABASE_URL       ex. https://xxxx.supabase.co
+#   SUPABASE_ANON_KEY  la clé publique « anon » (jamais la clé service_role)
+name: Maintenir Supabase actif
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Appeler la base
+        run: node scripts/maintenir-actif.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

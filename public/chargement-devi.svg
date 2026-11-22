@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Dévi, la mascotte de Yissolimon, en version animée pour l'écran de chargement (ailes qui battent, yeux qui clignent). -->
+  <style>
+    .aile-g, .aile-d, .yeux, .plume { transform-box: view-box; }
+    .aile-g { transform-origin: 54px 104px; animation: battreG .45s ease-in-out infinite alternate; }
+    .aile-d { transform-origin: 146px 104px; animation: battreD .45s ease-in-out infinite alternate; }
+    .yeux { transform-origin: 100px 101px; animation: cligner 3.2s ease-in-out infinite; }
+    .plume { transform-origin: 104px 52px; animation: plume .9s ease-in-out infinite alternate; }
+    @keyframes battreG { from { transform: rotate(0deg); } to { transform: rotate(48deg); } }
+    @keyframes battreD { from { transform: rotate(0deg); } to { transform: rotate(-48deg); } }
+    @keyframes cligner { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.1); } }
+    @keyframes plume { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+    @media (prefers-reduced-motion: reduce) { .aile-g, .aile-d, .yeux, .plume { animation: none; } }
+  </style>
+  <defs>
+    <radialGradient id="corps" cx="40%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#FFE680"/><stop offset=".55" stop-color="#FFC93C"/><stop offset="1" stop-color="#F29E1F"/>
+    </radialGradient>
+    <linearGradient id="aile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F7B52C"/><stop offset="1" stop-color="#D9861A"/>
+    </linearGradient>
+    <linearGradient id="bec" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FF9A4D"/><stop offset="1" stop-color="#F2661F"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#F2661F" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M84 166v14M84 180l-7 4M84 180l7 4"/><path d="M116 166v14M116 180l-7 4M116 180l7 4"/>
+  </g>
+  <g class="aile-g"><ellipse cx="43" cy="126" rx="15" ry="27" transform="rotate(-22 43 126)" fill="url(#aile)"/></g>
+  <g class="aile-d"><ellipse cx="157" cy="126" rx="15" ry="27" transform="rotate(22 157 126)" fill="url(#aile)"/></g>
+  <path class="plume" d="M92 50c3-14 13-16 14-4 5-10 14-7 10 6" fill="#F7B52C"/>
+  <ellipse cx="100" cy="112" rx="62" ry="60" fill="url(#corps)"/>
+  <ellipse cx="100" cy="134" rx="38" ry="31" fill="#FFF3CF"/>
+  <g class="yeux">
+    <ellipse cx="81" cy="100" rx="14" ry="16" fill="#fff"/><ellipse cx="119" cy="100" rx="14" ry="16" fill="#fff"/>
+    <circle cx="83" cy="103" r="8.5" fill="#2B1F4D"/><circle cx="117" cy="103" r="8.5" fill="#2B1F4D"/>
+    <circle cx="86.5" cy="99" r="3" fill="#fff"/><circle cx="120.5" cy="99" r="3" fill="#fff"/>
+  </g>
+  <ellipse cx="64" cy="121" rx="8" ry="5" fill="#FF7E8A" opacity=".55"/><ellipse cx="136" cy="121" rx="8" ry="5" fill="#FF7E8A" opacity=".55"/>
+  <path d="M90 117q10-6 20 0-4 12-10 13-6-1-10-13z" fill="url(#bec)"/>
+</svg>
