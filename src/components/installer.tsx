@@ -41,7 +41,7 @@ export function InviterInstallation() {
     const faite = () => setVisible(false);
     window.addEventListener('installation-possible', possible);
     window.addEventListener('installation-faite', faite);
-    const t = setTimeout(() => setVisible(true), 2500); // après l'écran de chargement
+    const t = setTimeout(() => setVisible(true), 3800); // après l'écran d'ouverture
     return () => { clearTimeout(t); window.removeEventListener('installation-possible', possible); window.removeEventListener('installation-faite', faite); };
   }, []);
 

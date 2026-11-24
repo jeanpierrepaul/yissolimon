@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { fermerOuverture } from './lib/ouverture';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AvisParent } from './pages/avis';
 import { ChoixGarderie, garderieParent } from './pages/choixgarderie';
@@ -13,13 +14,13 @@ import { AccueilResponsable, ActionPage, EvaluationPage, PlanPage, ResultatsPage
 function Routeur() {
   const { profil, chargement } = useSession();
   const { pathname } = useLocation();
-  // Au rechargement de la page, l'animation reste visible au moins deux secondes.
-  const [demarrage, setDemarrage] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setDemarrage(false), 2000); return () => clearTimeout(t); }, []);
+  const pagePublique = pathname.startsWith('/avis/') || pathname === '/parents';
+  // L'écran d'ouverture (index.html) disparaît en fondu une fois la session prête.
+  useEffect(() => { if (!chargement || pagePublique) fermerOuverture(); }, [chargement, pagePublique]);
   // Le questionnaire des parents est public : pas de connexion demandée.
   if (pathname.startsWith('/avis/')) return <Routes><Route path="/avis/:code" element={<AvisParent />} /></Routes>;
   if (pathname === '/parents') return <Routes><Route path="/parents" element={<ChoixGarderie />} /></Routes>;
-  if (chargement || demarrage) return <Chargement />;
+  if (chargement) return <Chargement />;
   // Appli installée par un parent : elle s'ouvre directement sur l'espace de sa garderie.
   if (!profil && pathname === '/' && estInstallee() && garderieParent()) return <Navigate to={`/avis/${garderieParent()!.code}`} replace />;
   if (!profil) return <Connexion />;

@@ -3,14 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Yissolimon</title>
-    <meta name="theme-color" content="#6C4CF1" />
+    <meta name="theme-color" content="#5B3BE0" />
     <meta name="description" content="Amélioration continue des garderies communautaires" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/chargement-devi.svg" as="image" />
+    <!-- Écran d'ouverture : styles intégrés pour qu'il s'affiche dès le premier instant, avant le reste de l'appli. -->
+    <style>
+      #ouverture { position: fixed; inset: 0; z-index: 9999; display: grid; place-content: center; justify-items: center; overflow: hidden;
+        background: radial-gradient(circle at 50% 35%, #8A6EFF 0%, #6C4CF1 45%, #4F33D1 100%); color: #fff; text-align: center;
+        font-family: 'Nunito Variable', 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+        transition: opacity .55s ease, transform .55s ease; }
+      #ouverture.sortie { opacity: 0; transform: scale(1.06); pointer-events: none; }
+      #ouverture .bulle { position: absolute; bottom: -80px; border-radius: 50%; background: #fff; opacity: .12; animation: monter 7s linear infinite; }
+      #ouverture .bulle.s { background: #FFC93C; opacity: .35; }
+      #ouverture .b1 { left: 8%; width: 46px; height: 46px; animation-duration: 6s; }
+      #ouverture .b2 { left: 22%; width: 18px; height: 18px; animation-delay: 1.2s; }
+      #ouverture .b3 { left: 70%; width: 60px; height: 60px; animation-duration: 8s; animation-delay: .4s; }
+      #ouverture .b4 { left: 86%; width: 22px; height: 22px; animation-delay: 2s; }
+      #ouverture .b5 { left: 45%; width: 14px; height: 14px; animation-duration: 5s; animation-delay: .8s; }
+      #ouverture .b6 { left: 58%; width: 30px; height: 30px; animation-duration: 6.5s; animation-delay: 2.6s; }
+      #ouverture .halo { position: absolute; left: 50%; top: 50%; width: 300px; height: 300px; margin: -230px 0 0 -150px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 201, 60, .45) 0%, rgba(255, 201, 60, 0) 70%); animation: respirer 2s ease-in-out infinite alternate; }
+      #ouverture .devi { position: relative; width: 150px; height: 150px; animation: arrivee .7s cubic-bezier(.3, 1.5, .5, 1) both, sauter .9s .7s cubic-bezier(.5, 0, .5, 1) infinite alternate; transform-origin: 50% 100%; }
+      #ouverture .ombre { width: 96px; height: 12px; border-radius: 50%; background: rgba(36, 27, 79, .3); animation: ombrer .9s .7s cubic-bezier(.5, 0, .5, 1) infinite alternate; }
+      #ouverture h1 { margin: 1.1rem 0 0; font-size: 2.6rem; font-weight: 900; letter-spacing: .01em; line-height: 1.1; }
+      #ouverture h1 span { display: inline-block; opacity: 0; animation: lettre .5s cubic-bezier(.3, 1.4, .5, 1) forwards; }
+      #ouverture .slogan { margin: .35rem 0 0; font-size: 1.1rem; font-weight: 700; color: #FFE08A; opacity: 0; animation: apparaitre .6s 1.05s forwards; }
+      #ouverture .barre { width: 220px; height: 8px; margin-top: 1.6rem; border-radius: 99px; background: rgba(255, 255, 255, .22); overflow: hidden; }
+      #ouverture .barre i { display: block; height: 100%; width: 100%; border-radius: inherit; background: #FFC93C; transform-origin: left; transform: scaleX(0); animation: remplir 2.5s .2s cubic-bezier(.4, 0, .2, 1) forwards; }
+      #ouverture .messages { position: relative; height: 1.5rem; width: 280px; margin-top: .7rem; font-size: .95rem; font-weight: 600; color: rgba(255, 255, 255, .85); }
+      #ouverture .messages span { position: absolute; inset: 0; opacity: 0; animation: message .9s forwards; }
+      #ouverture .messages span:nth-child(1) { animation-delay: .3s; }
+      #ouverture .messages span:nth-child(2) { animation-delay: 1.15s; }
+      #ouverture .messages span:nth-child(3) { animation-delay: 2s; animation-name: dernier; }
+      @keyframes monter { to { transform: translateY(-115vh); } }
+      @keyframes respirer { from { transform: scale(.9); opacity: .7; } to { transform: scale(1.1); opacity: 1; } }
+      @keyframes arrivee { from { transform: translateY(60px) scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+      @keyframes sauter { from { transform: translateY(0) scale(1.04, .96); } to { transform: translateY(-26px) scale(.98, 1.03); } }
+      @keyframes ombrer { from { transform: scale(1); } to { transform: scale(.65); opacity: .6; } }
+      @keyframes lettre { from { opacity: 0; transform: translateY(18px) rotate(-8deg); } to { opacity: 1; transform: none; } }
+      @keyframes apparaitre { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+      @keyframes remplir { to { transform: scaleX(1); } }
+      @keyframes message { 0% { opacity: 0; transform: translateY(8px); } 20%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
+      @keyframes dernier { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+      @media (prefers-reduced-motion: reduce) {
+        #ouverture *, #ouverture h1 span { animation: none !important; opacity: 1 !important; transform: none !important; }
+        #ouverture .bulle, #ouverture .messages span:not(:last-child) { display: none; }
+        #ouverture .barre i { transform: scaleX(.8) !important; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"><div class="chargement" role="status"><img src="/chargement-devi.svg" alt="" class="chargement-perso" width="160" height="160" /><span class="chargement-ombre"></span><p>Chargement<span class="points"><i>.</i><i>.</i><i>.</i></span></p></div></div>
+    <div id="ouverture" role="status" aria-label="Ouverture de Yissolimon">
+      <span class="bulle b1"></span><span class="bulle s b2"></span><span class="bulle b3"></span>
+      <span class="bulle s b4"></span><span class="bulle b5"></span><span class="bulle s b6"></span>
+      <span class="halo"></span>
+      <img class="devi" src="/chargement-devi.svg" alt="" width="150" height="150" />
+      <span class="ombre"></span>
+      <h1 aria-label="Yissolimon"><span style="animation-delay:.30s">Y</span><span style="animation-delay:.36s">i</span><span style="animation-delay:.42s">s</span><span style="animation-delay:.48s">s</span><span style="animation-delay:.54s">o</span><span style="animation-delay:.60s">l</span><span style="animation-delay:.66s">i</span><span style="animation-delay:.72s">m</span><span style="animation-delay:.78s">o</span><span style="animation-delay:.84s">n</span></h1>
+      <p class="slogan">Chaque garderie peut grandir.</p>
+      <div class="barre" aria-hidden="true"><i></i></div>
+      <div class="messages" aria-hidden="true"><span>Dévi se réveille…</span><span>On prépare vos fiches…</span><span>C'est prêt !</span></div>
+    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
