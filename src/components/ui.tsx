@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { GRILLE } from '../data/grille';
 import { aEnvoyer } from '../lib/db';
 import { useSession } from '../lib/session';
@@ -45,7 +45,7 @@ function EtatConnexion() {
 export function Cadre({ children }: { children: ReactNode }) {
   const { profil } = useSession();
   const liens: [string, string, string][] = profil?.role === 'responsable'
-    ? [['/', 'Accueil', 'accueil'], ['/activites', 'Activités', 'activites'], ['/plan', 'Plan', 'plan'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches'], ['/suivi', 'Suivi', 'suivi']]
+    ? [['/', 'Accueil', 'accueil'], ['/activites', 'Activités', 'activites'], ['/plan', 'Plan', 'plan'], ['/suivi', 'Suivi', 'suivi'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches']]
     : profil?.role === 'accompagnateur'
       ? [['/', 'Garderies', 'garderies'], ['/activites', 'Activités', 'activites'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches']]
       : [['/', 'Commune', 'commune'], ['/activites', 'Activités', 'activites'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches']];
@@ -73,10 +73,75 @@ export function Cadre({ children }: { children: ReactNode }) {
         </header>
         <main className="contenu">{children}</main>
       </div>
-      <nav className="nav-bas">
-        {liens.map(([to, l, ic]) => <NavLink key={to} to={to} end><Icone nom={ic} /><span>{l}</span></NavLink>)}
-      </nav>
+      <NavMobile liens={liens} />
     </div>
+  );
+}
+
+/** Couleurs des tuiles du panneau « Plus » (une par rubrique). */
+const TUILES: Record<string, { c: string; fond: string }> = {
+  services: { c: '#DC4C4C', fond: '#FDE6E6' }, fiches: { c: '#2FA866', fond: '#E3F6EB' },
+  suivi: { c: '#F2762E', fond: '#FFEFE4' }, compte: { c: '#F2557F', fond: '#FFE7EE' },
+  plan: { c: '#4767E8', fond: '#E7EBFD' }, activites: { c: '#E8A300', fond: '#FFF5D6' },
+  accueil: { c: '#6C4CF1', fond: '#EFEBFF' }, garderies: { c: '#12A594', fond: '#DDF6F2' }, commune: { c: '#1FA6DB', fond: '#E2F5FD' },
+};
+
+/**
+ * Barre du bas sur téléphone : 4 onglets dans une bulle flottante, et Dévi au centre.
+ * Dévi ouvre un panneau de grandes tuiles pour les autres rubriques et le compte.
+ */
+function NavMobile({ liens }: { liens: [string, string, string][] }) {
+  const [ouvert, setOuvert] = useState(false);
+  const { pathname } = useLocation();
+  useEffect(() => { setOuvert(false); }, [pathname]);
+  useEffect(() => {
+    if (!ouvert) return;
+    const echap = (e: KeyboardEvent) => { if (e.key === 'Escape') setOuvert(false); };
+    window.addEventListener('keydown', echap);
+    return () => window.removeEventListener('keydown', echap);
+  }, [ouvert]);
+
+  const barre = liens.slice(0, 4);
+  const autres: [string, string, string][] = [...liens.slice(4), ['/compte', 'Compte', 'compte']];
+  // Le panneau montre toutes les rubriques, en grandes tuiles colorées.
+  const toutes: [string, string, string][] = [...liens, ['/compte', 'Compte', 'compte']];
+  const autreActif = autres.some(([to]) => pathname === to || (to !== '/' && pathname.startsWith(to)));
+  const onglet = ([to, l, ic]: [string, string, string]) => (
+    <NavLink key={to} to={to} end className="onglet-bas"><span className="onglet-icone"><Icone nom={ic} taille={23} /></span><span className="onglet-nom">{l}</span></NavLink>
+  );
+
+  return (
+    <>
+      {ouvert && <div className="voile" onClick={() => setOuvert(false)} aria-hidden="true" />}
+      {ouvert && (
+        <div className="panneau-plus" role="dialog" aria-label="Autres rubriques">
+          <div className="panneau-tete">
+            <Mascotte taille={52} pose="salut" />
+            <p><strong>Où veux-tu aller ?</strong>Touche une tuile.</p>
+          </div>
+          <div className="tuiles-plus">
+            {toutes.map(([to, l, ic]) => {
+              const t = TUILES[ic] ?? { c: '#6C4CF1', fond: '#EFEBFF' };
+              return (
+                <NavLink key={to} to={to} end className="tuile-plus" style={{ background: t.fond, color: t.c }}>
+                  <span className="tuile-plus-icone" style={{ background: t.c }}><Icone nom={ic} taille={26} /></span>
+                  <span className="tuile-plus-nom">{l}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      <nav className="nav-bas" aria-label="Navigation principale">
+        {barre.slice(0, 2).map(onglet)}
+        <button type="button" className={`bouton-devi ${ouvert ? 'ouvert' : ''} ${autreActif ? 'actif' : ''}`}
+          onClick={() => setOuvert(o => !o)} aria-expanded={ouvert} aria-label={ouvert ? 'Fermer le menu' : 'Plus de rubriques'}>
+          <span className="devi-rond"><Mascotte taille={46} pose={ouvert ? 'salut' : 'normal'} /></span>
+          <span className="onglet-nom">{ouvert ? 'Fermer' : 'Plus'}</span>
+        </button>
+        {barre.slice(2).map(onglet)}
+      </nav>
+    </>
   );
 }
 
