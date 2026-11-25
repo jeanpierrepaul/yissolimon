@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ACTIVITES, AGES, MATERIELS, OBJECTIFS, THEME_OBJECTIF, activitesPossibles, type Activite, type Age, type Materiel, type Objectif } from '../data/activites';
 import { Icone, Mascotte, couleur } from '../components/illustrations';
 import { useEnLigne } from '../components/ui';
@@ -41,7 +42,13 @@ function CarteActivite({ a, surMesure = false }: { a: Activite; surMesure?: bool
 }
 
 export function Activites() {
-  const [choix, setChoix] = useState<Choix>(lireChoix);
+  // Depuis l'accueil ou la page Enfants : ?age=0-2 ouvre directement sur la bonne tranche d'âge.
+  const [params] = useSearchParams();
+  const ageLien = params.get('age') as Age | null;
+  const [choix, setChoix] = useState<Choix>(() => {
+    const c = lireChoix();
+    return ageLien && ageLien in AGES ? { ...c, age: ageLien, objectif: '', dispo: [] } : c;
+  });
   const [index, setIndex] = useState(0);
   useEffect(() => { try { localStorage.setItem(CLE, JSON.stringify(choix)); } catch { /* stockage indisponible */ } }, [choix]);
   const maj = (p: Partial<Choix>) => { setChoix({ ...choix, ...p }); setIndex(0); setPerso(null); };

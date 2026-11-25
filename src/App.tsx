@@ -9,17 +9,21 @@ import { SessionProvider, useSession } from './lib/session';
 import { AccueilAccompagnateur, Bibliotheque, Compte, Connexion, Coordination, FichePage, GarderieAccompagnee } from './pages/autres';
 import { Annuaire } from './pages/services';
 import { Activites } from './pages/activites';
+import { MesEnfants } from './pages/enfants';
+import { EspaceJeux } from './pages/jeux';
 import { AccueilResponsable, ActionPage, EvaluationPage, PlanPage, ResultatsPage, SuiviResponsable } from './pages/responsable';
 
 function Routeur() {
   const { profil, chargement } = useSession();
   const { pathname } = useLocation();
-  const pagePublique = pathname.startsWith('/avis/') || pathname === '/parents';
+  const pagePublique = pathname.startsWith('/avis/') || pathname === '/parents' || pathname === '/jeux';
   // L'écran d'ouverture (index.html) disparaît en fondu une fois la session prête.
   useEffect(() => { if (!chargement || pagePublique) fermerOuverture(); }, [chargement, pagePublique]);
   // Le questionnaire des parents est public : pas de connexion demandée.
   if (pathname.startsWith('/avis/')) return <Routes><Route path="/avis/:code" element={<AvisParent />} /></Routes>;
   if (pathname === '/parents') return <Routes><Route path="/parents" element={<ChoixGarderie />} /></Routes>;
+  // Espace jeux des enfants : public, sans compte, en plein écran (hors du cadre de gestion).
+  if (pathname === '/jeux') return <Routes><Route path="/jeux" element={<EspaceJeux />} /></Routes>;
   if (chargement) return <Chargement />;
   // Appli installée par un parent : elle s'ouvre directement sur l'espace de sa garderie.
   if (!profil && pathname === '/' && estInstallee() && garderieParent()) return <Navigate to={`/avis/${garderieParent()!.code}`} replace />;
@@ -35,6 +39,7 @@ function Routeur() {
         <Route path="/compte" element={<Compte />} />
         <Route path="/services" element={<Annuaire />} />
         <Route path="/activites" element={<Activites />} />
+        <Route path="/enfants" element={<MesEnfants />} />
         {profil.role !== 'coordination' && <>
           <Route path="/evaluation/:id/resultats" element={<ResultatsPage />} />
           <Route path="/action/:id" element={<ActionPage />} />

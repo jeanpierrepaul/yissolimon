@@ -10,6 +10,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { oublierGarderieParent, retenirGarderieParent } from './choixgarderie';
 import { db } from '../lib/db';
 import { useSession } from '../lib/session';
+import { Reperes } from './enfants';
+import type { Tranche } from '../data/reperes';
 
 const cleDeja = (code: string) => `avis-donne-${code}`;
 function lire(cle: string) { try { return localStorage.getItem(cle); } catch { return null; } }
@@ -23,7 +25,8 @@ export function AvisParent() {
   const [rep, setRep] = useState<(number | null)[]>(QUESTIONS_AVIS.map(() => null));
   const [etat, setEtat] = useState<'saisie' | 'envoi' | 'merci' | 'deja'>(lire(cleDeja(code)) ? 'deja' : 'saisie');
   const [erreur, setErreur] = useState<string | null>(null);
-  const [onglet, setOnglet] = useState<'services' | 'loisirs' | 'avis'>(etat === 'deja' ? 'services' : 'avis');
+  const [onglet, setOnglet] = useState<'grandir' | 'services' | 'loisirs' | 'avis'>(etat === 'deja' ? 'grandir' : 'avis');
+  const [tranche, setTranche] = useState<Tranche>('petits');
   const [remarque, setRemarque] = useState('');
 
   useEffect(() => {
@@ -56,16 +59,22 @@ export function AvisParent() {
             <div className="hero-texte">
               <p className="sur">{nom ?? (enLigne ? 'Chargement…' : 'Hors connexion')}</p>
               <h1>Bienvenue, chers parents !</h1>
-              <p>Trouvez les services utiles pour votre enfant, des idées de sorties en famille près de chez vous, et donnez votre avis sur la garderie. <strong>Sans compte et sans donner votre nom.</strong></p>
+              <p>Suivez comment grandit votre enfant, trouvez les services utiles pour lui, des idées de sorties en famille, et donnez votre avis sur la garderie. <strong>Sans compte et sans donner votre nom.</strong></p>
             </div>
             <Mascotte taille={130} pose="salut" className="hero-mascotte" />
           </section>
           <div className="onglets" role="tablist">
+            <button role="tab" id="onglet-grandir" aria-selected={onglet === 'grandir'} className={onglet === 'grandir' ? 'choisi' : ''} onClick={() => setOnglet('grandir')}>Il grandit</button>
             <button role="tab" id="onglet-services" aria-selected={onglet === 'services'} className={onglet === 'services' ? 'choisi' : ''} onClick={() => setOnglet('services')}>Services</button>
             <button role="tab" id="onglet-loisirs" aria-selected={onglet === 'loisirs'} className={onglet === 'loisirs' ? 'choisi' : ''} onClick={() => setOnglet('loisirs')}>Sorties et loisirs</button>
             <button role="tab" id="onglet-avis" aria-selected={onglet === 'avis'} className={onglet === 'avis' ? 'choisi' : ''} onClick={() => setOnglet('avis')}>Mon avis</button>
           </div>
-          {onglet !== 'avis' ? <ServicesParents code={code} loisirs={onglet === 'loisirs'} /> : etat === 'merci' || etat === 'deja' ? (
+          {onglet === 'grandir' ? (
+            <>
+              <p className="intro-enfants">Que sait faire votre enfant à son âge ? Comment l’aider à grandir ? Quels signes doivent vous alerter ?</p>
+              <Reperes tranche={tranche} choisir={setTranche} versServices={() => setOnglet('services')} />
+            </>
+          ) : onglet !== 'avis' ? <ServicesParents code={code} loisirs={onglet === 'loisirs'} /> : etat === 'merci' || etat === 'deja' ? (
           <div className="merci"><Mascotte taille={150} pose="bravo" className="centre" /><h1>Merci !</h1>
             <p>{etat === 'merci' ? 'Votre avis a bien été envoyé.' : 'Vous avez déjà donné votre avis depuis ce téléphone.'} Il aide l’équipe de la garderie à s’améliorer.</p>
             <div className="boutons-merci">

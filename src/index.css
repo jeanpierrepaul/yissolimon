@@ -533,3 +533,139 @@ fieldset:disabled .choix button:not(.choisi) { opacity: .5; }
 @media (min-width: 900px) { .installer { left: auto; right: 24px; bottom: 24px; width: 460px; } }
 @keyframes installer-entree { from { transform: translateY(30px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .installer { animation: none; } }
+
+/* ---------- L'enfant au centre : accueil, effectifs par âge, repères ---------- */
+.bloc-enfants h2 { margin-top: .5rem; }
+.tranches { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.tranche { display: grid; justify-items: center; text-align: center; gap: .1rem; padding: 1rem .5rem; border-radius: var(--rayon);
+  text-decoration: none; color: var(--encre); box-shadow: var(--ombre); transition: transform .12s; }
+.tranche:hover { transform: translateY(-2px); }
+.tranche strong { font-size: 2rem; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.tranche span { font-weight: 800; }
+.tranche small { font-size: .78rem; color: var(--gris); font-weight: 700; }
+.tranche-bebes { background: #FFE7EE; } .tranche-bebes strong { color: #F2557F; }
+.tranche-petits { background: #FFF5D6; } .tranche-petits strong { color: #C98A00; }
+.tranche-grands { background: #E3F6EB; } .tranche-grands strong { color: #2FA866; }
+.carte-reperes { display: flex; align-items: center; gap: .9rem; margin: 1rem 0; padding: 1rem 1.1rem; border-radius: var(--rayon);
+  text-decoration: none; color: #fff; background: linear-gradient(135deg, #FF7EA0, #F2557F); box-shadow: 0 12px 28px rgba(242, 85, 127, .26); transition: transform .12s; }
+.carte-reperes:hover { transform: translateY(-2px); }
+.carte-reperes > span:nth-child(2) { flex: 1; min-width: 0; }
+.carte-reperes strong { display: block; font-size: 1.08rem; line-height: 1.25; }
+.carte-reperes span span { display: block; font-size: .9rem; opacity: .95; font-weight: 600; margin-top: .15rem; }
+.titre-gestion { margin-top: 2.4rem; padding-top: 1.2rem; border-top: 2px dashed var(--filet); }
+.score-gestion { margin: -.3rem 0 1rem; color: var(--gris); font-size: .95rem; }
+
+.effectifs-form { display: grid; gap: .6rem; margin-top: .6rem; }
+.effectif-ligne { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .6rem .8rem; border-radius: 16px; background: var(--fond); }
+.effectif-ligne > span:first-child { display: grid; }
+.effectif-ligne small { color: var(--gris); font-weight: 700; font-size: .8rem; }
+.compteur { display: flex; align-items: center; gap: .3rem; }
+.compteur button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--violet); color: #fff; font: 900 1.3rem/1 var(--police); cursor: pointer; }
+.compteur input { width: 3.4rem; height: 40px; text-align: center; border: 2px solid var(--filet); border-radius: 12px; font: 800 1.1rem var(--police); color: var(--encre); background: var(--carte); }
+.effectifs-form .bouton { justify-self: start; }
+
+.intro-enfants { color: var(--gris); margin: -.3rem 0 1rem; }
+.onglets-ages button { display: grid; gap: .05rem; }
+.onglet-age { font-size: .7rem; font-weight: 700; opacity: .8; }
+.repere { background: var(--carte); border-radius: var(--rayon); box-shadow: var(--ombre); margin-bottom: .7rem; overflow: hidden; }
+.repere-tete { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.2rem; border: 0; background: none;
+  font: 800 1.1rem var(--police); color: var(--encre); cursor: pointer; text-align: left; }
+.repere-tete span { font-size: .85rem; color: var(--violet); }
+.repere.ouvert .repere-tete { background: var(--violet-clair); }
+.repere-corps { padding: .2rem 1.2rem 1.2rem; }
+.repere-corps h3 { font-size: 1rem; margin: 1.1rem 0 .5rem; }
+.domaines { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: .6rem; }
+.domaine { border-radius: 16px; padding: .8rem .9rem; }
+.domaine strong { display: block; font-size: 1rem; }
+.domaine small { display: block; color: var(--gris); font-size: .78rem; font-weight: 700; }
+.domaine ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .92rem; }
+.puces-coche { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; font-size: .95rem; }
+.puces-coche li { display: flex; gap: .5rem; align-items: flex-start; }
+.puces-coche svg { flex: none; margin-top: .2rem; color: var(--vert); }
+.alerte-dev { margin-top: 1.1rem; padding: .9rem 1rem 1rem; border-radius: 16px; background: #FDE6E6; border-left: 5px solid var(--rouge); }
+.alerte-dev h3 { margin-top: 0; color: #B83838; }
+.alerte-dev ul { margin: 0 0 .6rem; padding-left: 1.1rem; font-size: .93rem; }
+.alerte-dev p { font-size: .88rem; margin: 0 0 .7rem; }
+@media (max-width: 420px) { .tranche strong { font-size: 1.6rem; } .tranches { gap: .4rem; } }
+
+/* ---------- Espace jeux des enfants ---------- */
+.carte-jeux { display: flex; align-items: center; gap: .9rem; margin: 1rem 0; padding: 1rem 1.1rem; border-radius: var(--rayon);
+  text-decoration: none; color: #fff; background: linear-gradient(135deg, #3FC7B4, #12A594); box-shadow: 0 12px 28px rgba(18, 165, 148, .26); transition: transform .12s; }
+.carte-jeux:hover { transform: translateY(-2px); }
+.carte-jeux > span:nth-child(2) { flex: 1; min-width: 0; }
+.carte-jeux strong { display: block; font-size: 1.08rem; line-height: 1.25; }
+.carte-jeux span span { display: block; font-size: .9rem; opacity: .95; font-weight: 600; margin-top: .15rem; }
+.carte-jeux .carte-idee-icone { font-size: 1.7rem; }
+
+.espace-jeux { min-height: 100dvh; background: linear-gradient(180deg, #EFEBFF, #FFF5D6); display: flex; flex-direction: column;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+.jeux-tete { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: .7rem; padding: .6rem 1rem; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); }
+.jeux-tete strong { flex: 1; font-size: 1.2rem; font-weight: 900; }
+.retour-jeux { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--violet); color: #fff; font: 900 1.4rem var(--police); cursor: pointer; }
+.bouton-adulte { position: relative; overflow: hidden; border: 2px solid var(--filet); background: #fff; border-radius: 999px; padding: .55rem 1rem;
+  font: 800 .85rem var(--police); color: var(--gris); cursor: pointer; }
+.bouton-adulte-jauge { position: absolute; inset: 0 auto 0 0; background: var(--soleil); transition: width .05s linear; }
+.bouton-adulte-texte { position: relative; }
+.bouton-adulte.sortie { margin-top: .6rem; }
+.jeux-accueil { padding: 1rem 1rem 2rem; max-width: 760px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+.jeux-accueil h1 { text-align: center; margin: .4rem 0 1rem; }
+.mascotte.centre, .centre { display: block; margin: 0 auto; }
+.ages-jeux { display: grid; gap: .8rem; }
+.age-jeu { display: grid; gap: .2rem; padding: 1.3rem; border: 0; border-radius: 26px; cursor: pointer; font-family: var(--police); color: var(--encre); box-shadow: var(--ombre); }
+.age-jeu strong { font-size: 1.5rem; font-weight: 900; }
+.age-jeu span { font-weight: 700; color: var(--gris); }
+.age-bebe { background: #FFE7EE; } .age-petit { background: #FFF5D6; } .age-grand { background: #E3F6EB; }
+.conseil-ecran { background: #fff; border-radius: 20px; padding: 1rem 1.1rem; box-shadow: var(--ombre); margin-bottom: 1rem; }
+.conseil-ecran.court { font-size: .9rem; color: var(--gris); font-weight: 700; }
+.conseil-ecran ul { margin: .4rem 0 0; padding-left: 1.2rem; }
+.grille-jeux { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .8rem; }
+.tuile-jeu { display: grid; justify-items: center; gap: .2rem; padding: 1.1rem .6rem; border: 0; border-radius: 26px; background: #fff; box-shadow: var(--ombre);
+  cursor: pointer; font-family: var(--police); color: var(--encre); text-align: center; transition: transform .12s; }
+.tuile-jeu:active { transform: scale(.96); }
+.tuile-jeu .emoji { font-size: 3.2rem; line-height: 1.1; }
+.tuile-jeu strong { font-size: 1.15rem; font-weight: 900; }
+.tuile-jeu small { color: var(--gris); font-weight: 700; font-size: .8rem; }
+.jeu-zone { flex: 1; display: flex; flex-direction: column; position: relative; }
+.jeu-centre { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem; padding: 1rem; text-align: center; }
+.consigne { font-size: 1.6rem; font-weight: 900; margin: 0; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+.rejouer { border: 0; background: #fff; border-radius: 50%; width: 48px; height: 48px; font-size: 1.4rem; cursor: pointer; box-shadow: var(--ombre); }
+.rangee-choix { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.rond-couleur { width: 96px; height: 96px; border-radius: 50%; border: 6px solid #fff; box-shadow: var(--ombre-forte); cursor: pointer; }
+.chiffre { width: 92px; height: 92px; border-radius: 26px; border: 0; background: #fff; font: 900 2.6rem var(--police); color: var(--violet); box-shadow: var(--ombre-forte); cursor: pointer; }
+.forme { width: 104px; height: 104px; border-radius: 26px; border: 0; background: #fff; padding: 12px; box-shadow: var(--ombre-forte); cursor: pointer; }
+.forme svg { width: 100%; height: 100%; }
+.fruits { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; max-width: 340px; font-size: 3rem; }
+.fruits span { cursor: pointer; }
+.jeu-score { font-weight: 900; font-size: 1.2rem; margin: 0; }
+.secoue { animation: secouer .4s; }
+@keyframes secouer { 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-5px); } }
+.jeu-bulles { flex: 1; position: relative; overflow: hidden; min-height: calc(100dvh - 64px); }
+.jeu-bulles .jeu-score { position: absolute; top: .8rem; left: 0; right: 0; text-align: center; z-index: 2; }
+.bulle { position: absolute; bottom: -120px; border: 0; border-radius: 50%; opacity: .9; cursor: pointer; box-shadow: inset -6px -8px 16px rgba(0,0,0,.12);
+  animation-name: monter; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes monter { from { transform: translateY(0); } to { transform: translateY(calc(-100dvh - 160px)); } }
+.grille-animaux { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .8rem; padding: 1rem; }
+.carte-animal { display: grid; justify-items: center; gap: .2rem; padding: 1rem .5rem; border: 0; border-radius: 26px; background: #fff; box-shadow: var(--ombre);
+  font: 900 1.05rem var(--police); color: var(--encre); cursor: pointer; transition: transform .15s; }
+.carte-animal .emoji { font-size: 3.6rem; line-height: 1.1; }
+.carte-animal.actif { transform: scale(1.06); background: var(--soleil-clair); }
+.memoire { display: grid; grid-template-columns: repeat(4, minmax(64px, 90px)); gap: .6rem; }
+.carte-memoire { aspect-ratio: 1; border: 0; border-radius: 18px; background: var(--violet); color: #fff; font: 900 2.2rem var(--police); cursor: pointer; box-shadow: var(--ombre-forte); }
+.carte-memoire.vue { background: #fff; color: inherit; }
+.carte-memoire.trouvee { background: var(--vert-clair); }
+.comptines { display: grid; gap: .9rem; padding: 1rem; max-width: 760px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+.comptine { background: #fff; border-radius: 22px; padding: 1rem 1.1rem; box-shadow: var(--ombre); }
+.comptine header { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; }
+.comptine header strong { font-size: 1.2rem; font-weight: 900; }
+.comptine header small { color: var(--gris); font-weight: 800; }
+.comptine ol { list-style: none; padding: 0; margin: .6rem 0; display: grid; gap: .2rem; font-size: 1.05rem; }
+.comptine li { padding: .15rem .5rem; border-radius: 10px; transition: background .2s; }
+.comptine li.chantee { background: var(--soleil); font-weight: 800; }
+.comptine-boutons { display: flex; gap: .5rem; flex-wrap: wrap; }
+.pause-jeux { align-items: center; justify-content: center; text-align: center; padding: 2rem 1rem; gap: .4rem; }
+@media (prefers-reduced-motion: reduce) { .bulle { animation-duration: 12s !important; } .secoue { animation: none; } }
+
+/* ---------- Icônes-personnages des rubriques (bâtiment, cahier, lampe, puzzle) ---------- */
+.icone-personnage { display: block; border-radius: 26%; flex: none; box-shadow: 0 2px 6px rgba(36, 27, 79, .18); }
+.tuile-plus-icone.tuile-personnage { width: 52px; height: 52px; background: none; border-radius: 26%; }
+.onglet-icone:has(.icone-personnage) { width: 52px; height: 36px; }

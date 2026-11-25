@@ -11,6 +11,8 @@ import { AvisGarderie } from './avis';
 import { Icone, Mascotte, PastilleTheme, couleur } from '../components/illustrations';
 import { MonArbre, Parcours } from '../components/arbre';
 import { conseilsIA, type ActionIA } from '../lib/ia';
+import { ORDRE_TRANCHES, TRANCHES } from '../data/reperes';
+import { FormEffectifs, activiteDuJour, total, useEffectifs } from './enfants';
 
 const ETAPES = [
   ['Observer', 'Autoévaluation avec l’équipe'],
@@ -24,7 +26,13 @@ export function AccueilResponsable() {
   const { profil } = useSession();
   const d = useGarderie(profil?.garderie_id);
   const nav = useNavigate();
+  const [eff, majEff] = useEffectifs(profil?.garderie_id);
+  const [modifier, setModifier] = useState(false);
   if (!d) return <Chargement />;
+
+  // Tranche d'âge la plus nombreuse : c'est pour elle que l'on propose l'activité du jour.
+  const principale = eff ? ORDRE_TRANCHES.reduce((a, b) => (eff[b] > eff[a] ? b : a)) : null;
+  const act = principale ? activiteDuJour(principale) : null;
 
   const actionsCycle = d.derniere ? d.actions.filter((a) => a.evaluation_id === d.derniere!.id) : [];
   const ouvertes = d.actions.filter((a) => a.statut !== 'terminee');
@@ -53,10 +61,55 @@ export function AccueilResponsable() {
         <div className="hero-texte">
           <p className="sur">{d.garderie?.nom ?? 'Ma garderie'}{d.garderie?.commune && ` · ${d.garderie.commune}`}</p>
           <h1>Bonjour{prenom && `, ${prenom}`} !</h1>
-          <p>{sc ? <>Score de votre garderie : <strong>{sc.global} %</strong>. Continuons à progresser ensemble.</> : 'Prête à faire le point avec votre équipe ?'}</p>
+          <p>{eff ? <>Aujourd’hui, <strong>{total(eff)} enfant{total(eff) > 1 ? 's' : ''}</strong> comptent sur votre équipe.</> : 'Commençons par vos enfants.'}</p>
         </div>
         <Mascotte taille={150} pose="salut" className="hero-mascotte" />
       </section>
+
+      <section className="bloc-enfants">
+        <h2>Vos enfants <small>le cœur de la garderie</small></h2>
+        {eff === undefined ? null : !eff || modifier ? (
+          <div className="prochaine">
+            <h3>Combien d’enfants accueillez-vous, par âge ?</h3>
+            <p>Yissolimon vous proposera des activités et des repères adaptés à leur âge.</p>
+            <FormEffectifs init={eff} onFini={(v) => { void majEff(v); setModifier(false); }} />
+          </div>
+        ) : (
+          <>
+            <div className="tranches">
+              {ORDRE_TRANCHES.map((t) => (
+                <Link key={t} to={`/enfants?tranche=${t}`} className={`tranche tranche-${t}`}>
+                  <strong>{eff[t]}</strong><span>{TRANCHES[t].nom}</span><small>{TRANCHES[t].ages}</small>
+                </Link>
+              ))}
+            </div>
+            <p className="discret"><button className="lien" onClick={() => setModifier(true)}>Modifier les effectifs</button></p>
+            {act && (
+              <Link to={`/activites?age=${TRANCHES[principale!].activite}`} className="carte-idee">
+                <span className="carte-idee-icone"><Icone nom="activites" taille={30} /></span>
+                <span><strong>Aujourd’hui avec les {TRANCHES[principale!].nom.toLowerCase()} : {act.titre}</strong>
+                  <span>{act.minutes} min · {act.but}</span></span>
+                <Icone nom="fleche" />
+              </Link>
+            )}
+            <Link to="/jeux" className="carte-jeux">
+              <span className="carte-idee-icone"><img src="/rubriques/puzzle.png" alt="" width={46} height={46} className="icone-personnage" /></span>
+              <span><strong>Espace jeux des enfants</strong>
+                <span>Jeux éducatifs et comptines selon l’âge, sur ce téléphone, sans internet.</span></span>
+              <Icone nom="fleche" />
+            </Link>
+            <Link to={`/enfants?tranche=${principale}`} className="carte-reperes">
+              <span className="carte-idee-icone"><Icone nom="coeur" taille={28} /></span>
+              <span><strong>Comment vont-ils grandir ?</strong>
+                <span>Ce qu’ils savent faire à leur âge, comment les aider, et les signes à surveiller.</span></span>
+              <Icone nom="fleche" />
+            </Link>
+          </>
+        )}
+      </section>
+
+      <h2 className="titre-gestion">Ma garderie <small>faire progresser l’accueil, pour eux</small></h2>
+      {sc && <p className="score-gestion">Score de la dernière autoévaluation : <strong>{sc.global} %</strong>. Continuons à progresser ensemble.</p>}
       {d.garderie?.valide === false && (
         <p className="bandeau-attente"><strong>Inscription en attente de validation.</strong> Vous pouvez déjà tout utiliser. La coordination de la commune validera votre garderie pour l’inclure dans le suivi communal.</p>
       )}
@@ -102,13 +155,6 @@ export function AccueilResponsable() {
           </>
         )}
       </section>
-
-      <Link to="/activites" className="carte-idee">
-        <span className="carte-idee-icone"><Icone nom="activites" taille={30} /></span>
-        <span><strong>Que puis-je faire aujourd’hui avec les enfants ?</strong>
-          <span>Une activité prête en 5, 10 ou 15 minutes, avec le matériel que vous avez.</span></span>
-        <Icone nom="fleche" />
-      </Link>
 
       <MonArbre d={d} compact />
 

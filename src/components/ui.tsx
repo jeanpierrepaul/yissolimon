@@ -42,20 +42,31 @@ function EtatConnexion() {
   );
 }
 
+/** Les 4 petits personnages (public/rubriques) remplacent l'icône de certaines rubriques. */
+const PERSONNAGES: Record<string, string> = {
+  accueil: 'batiment', garderies: 'batiment', fiches: 'cahier', activites: 'lampe', jeux: 'puzzle',
+};
+export function IconeRubrique({ nom, taille = 22 }: { nom: string; taille?: number }) {
+  const p = PERSONNAGES[nom];
+  return p
+    ? <img src={`/rubriques/${p}.png`} alt="" width={taille} height={taille} className="icone-personnage" />
+    : <Icone nom={nom} taille={taille} />;
+}
+
 export function Cadre({ children }: { children: ReactNode }) {
   const { profil } = useSession();
   const liens: [string, string, string][] = profil?.role === 'responsable'
-    ? [['/', 'Accueil', 'accueil'], ['/activites', 'Activités', 'activites'], ['/plan', 'Plan', 'plan'], ['/suivi', 'Suivi', 'suivi'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches']]
+    ? [['/', 'Accueil', 'accueil'], ['/enfants', 'Enfants', 'enfants'], ['/activites', 'Activités', 'activites'], ['/plan', 'Plan', 'plan'], ['/suivi', 'Suivi', 'suivi'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches'], ['/jeux', 'Jeux', 'jeux']]
     : profil?.role === 'accompagnateur'
-      ? [['/', 'Garderies', 'garderies'], ['/activites', 'Activités', 'activites'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches']]
-      : [['/', 'Commune', 'commune'], ['/activites', 'Activités', 'activites'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches']];
+      ? [['/', 'Garderies', 'garderies'], ['/enfants', 'Enfants', 'enfants'], ['/activites', 'Activités', 'activites'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches'], ['/jeux', 'Jeux', 'jeux']]
+      : [['/', 'Commune', 'commune'], ['/enfants', 'Enfants', 'enfants'], ['/activites', 'Activités', 'activites'], ['/services', 'Services', 'services'], ['/bibliotheque', 'Fiches', 'fiches'], ['/jeux', 'Jeux', 'jeux']];
   const initiale = (profil?.nom ?? '?').trim().charAt(0).toUpperCase();
   return (
     <div className="appli">
       <aside className="cote">
         <NavLink to="/" className="marque"><Mascotte taille={38} /> Yissolimon</NavLink>
         <nav className="nav-cote">
-          {liens.map(([to, l, ic]) => <NavLink key={to} to={to} end><Icone nom={ic} /> {l}</NavLink>)}
+          {liens.map(([to, l, ic]) => <NavLink key={to} to={to} end><IconeRubrique nom={ic} taille={28} /> {l}</NavLink>)}
           <NavLink to="/compte"><Icone nom="compte" /> Compte</NavLink>
         </nav>
         <div className="carte-cote">
@@ -83,7 +94,7 @@ const TUILES: Record<string, { c: string; fond: string }> = {
   services: { c: '#DC4C4C', fond: '#FDE6E6' }, fiches: { c: '#2FA866', fond: '#E3F6EB' },
   suivi: { c: '#F2762E', fond: '#FFEFE4' }, compte: { c: '#F2557F', fond: '#FFE7EE' },
   plan: { c: '#4767E8', fond: '#E7EBFD' }, activites: { c: '#E8A300', fond: '#FFF5D6' },
-  accueil: { c: '#6C4CF1', fond: '#EFEBFF' }, garderies: { c: '#12A594', fond: '#DDF6F2' }, commune: { c: '#1FA6DB', fond: '#E2F5FD' },
+  accueil: { c: '#6C4CF1', fond: '#EFEBFF' }, enfants: { c: '#F2557F', fond: '#FFE7EE' }, jeux: { c: '#6C4CF1', fond: '#EFEBFF' }, garderies: { c: '#12A594', fond: '#DDF6F2' }, commune: { c: '#1FA6DB', fond: '#E2F5FD' },
 };
 
 /**
@@ -107,7 +118,7 @@ function NavMobile({ liens }: { liens: [string, string, string][] }) {
   const toutes: [string, string, string][] = [...liens, ['/compte', 'Compte', 'compte']];
   const autreActif = autres.some(([to]) => pathname === to || (to !== '/' && pathname.startsWith(to)));
   const onglet = ([to, l, ic]: [string, string, string]) => (
-    <NavLink key={to} to={to} end className="onglet-bas"><span className="onglet-icone"><Icone nom={ic} taille={23} /></span><span className="onglet-nom">{l}</span></NavLink>
+    <NavLink key={to} to={to} end className="onglet-bas"><span className="onglet-icone"><IconeRubrique nom={ic} taille={PERSONNAGES[ic] ? 30 : 23} /></span><span className="onglet-nom">{l}</span></NavLink>
   );
 
   return (
@@ -124,7 +135,9 @@ function NavMobile({ liens }: { liens: [string, string, string][] }) {
               const t = TUILES[ic] ?? { c: '#6C4CF1', fond: '#EFEBFF' };
               return (
                 <NavLink key={to} to={to} end className="tuile-plus" style={{ background: t.fond, color: t.c }}>
-                  <span className="tuile-plus-icone" style={{ background: t.c }}><Icone nom={ic} taille={26} /></span>
+                  {PERSONNAGES[ic]
+                    ? <span className="tuile-plus-icone tuile-personnage"><IconeRubrique nom={ic} taille={52} /></span>
+                    : <span className="tuile-plus-icone" style={{ background: t.c }}><Icone nom={ic} taille={26} /></span>}
                   <span className="tuile-plus-nom">{l}</span>
                 </NavLink>
               );
