@@ -5,6 +5,7 @@ import { AvisParent } from './pages/avis';
 import { ChoixGarderie, garderieParent } from './pages/choixgarderie';
 import { InviterInstallation, estInstallee } from './components/installer';
 import { Cadre, Chargement } from './components/ui';
+import { RappelAutoeval } from './components/rappel';
 import { SessionProvider, useSession } from './lib/session';
 import { AccueilAccompagnateur, Bibliotheque, Compte, Connexion, Coordination, FichePage, GarderieAccompagnee } from './pages/autres';
 import { Annuaire } from './pages/services';
@@ -32,6 +33,7 @@ function Routeur() {
     : profil.role === 'accompagnateur' ? <AccueilAccompagnateur /> : <Coordination />;
   return (
     <Cadre>
+      {profil.role === 'responsable' && <RappelAutoeval />}
       <Routes>
         <Route path="/" element={accueil} />
         <Route path="/bibliotheque" element={<Bibliotheque />} />

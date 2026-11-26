@@ -44,7 +44,7 @@ function EtatConnexion() {
 
 /** Les 4 petits personnages (public/rubriques) remplacent l'icône de certaines rubriques. */
 const PERSONNAGES: Record<string, string> = {
-  accueil: 'batiment', garderies: 'batiment', fiches: 'cahier', activites: 'lampe', jeux: 'puzzle',
+  accueil: 'batiment', garderies: 'batiment', enfants: 'enfant', fiches: 'cahier', activites: 'lampe', jeux: 'puzzle', plan: 'plan', suivi: 'suivi', services: 'services',
 };
 export function IconeRubrique({ nom, taille = 22 }: { nom: string; taille?: number }) {
   const p = PERSONNAGES[nom];

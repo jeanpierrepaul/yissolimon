@@ -135,7 +135,16 @@ strong { font-weight: 800; }
 .bouton:disabled { background: #C9C3E6; box-shadow: none; cursor: not-allowed; }
 .bouton.secondaire { background: var(--carte); color: var(--violet); box-shadow: inset 0 0 0 2px var(--violet); }
 .bouton.petit { min-height: 40px; padding: .45rem 1rem; font-size: .88rem; }
-.lien { border: 0; background: none; padding: 0; color: var(--violet); text-decoration: underline; font: inherit; font-weight: 700; cursor: pointer; }
+.lien { border: 0; background: none; padding: 0; color: var(--violet); font: inherit; font-weight: 700; cursor: pointer; }
+/* Les actions secondaires sont de vrais petits boutons (CTA), plus des liens soulignés. */
+a.lien, button.lien { display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-height: 40px; padding: .45rem 1.1rem;
+  border-radius: 999px; background: var(--violet-clair); color: var(--violet-fonce); box-shadow: inset 0 0 0 2px var(--violet);
+  font-size: .9rem; text-decoration: none; transition: background .15s, color .15s, transform .1s; }
+a.lien:hover, button.lien:hover { background: var(--violet); color: #fff; }
+a.lien:active, button.lien:active { transform: scale(.97); }
+a.lien:focus-visible, button.lien:focus-visible { outline: 3px solid var(--soleil); outline-offset: 2px; }
+button.lien.danger { background: #FDE6E6; color: #B42318; box-shadow: inset 0 0 0 2px #DC4C4C; }
+button.lien.danger:hover { background: #DC4C4C; color: #fff; }
 .danger { color: var(--rouge); }
 .discret { margin-top: 1rem; font-size: .9rem; }
 
@@ -669,3 +678,17 @@ fieldset:disabled .choix button:not(.choisi) { opacity: .5; }
 .icone-personnage { display: block; border-radius: 26%; flex: none; box-shadow: 0 2px 6px rgba(36, 27, 79, .18); }
 .tuile-plus-icone.tuile-personnage { width: 52px; height: 52px; background: none; border-radius: 26%; }
 .onglet-icone:has(.icone-personnage) { width: 52px; height: 36px; }
+
+/* Rappel de l'autoévaluation mensuelle obligatoire */
+.rappel-autoeval { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin: 0 0 1rem; padding: .7rem .8rem .7rem 1rem;
+  border-radius: 16px; background: var(--soleil-clair); box-shadow: inset 0 0 0 2px var(--soleil); font-size: .9rem; }
+.rappel-autoeval.retard { background: #FDE6E6; box-shadow: inset 0 0 0 2px #DC4C4C; }
+.rappel-autoeval.retard strong { color: #B42318; }
+.rappel-autoeval .bouton { flex: none; }
+.voile-rappel { z-index: 40; }
+.fenetre-rappel { position: fixed; z-index: 41; left: 16px; right: 16px; top: 50%; transform: translateY(-50%); max-width: 440px; margin: 0 auto;
+  display: grid; justify-items: center; gap: .55rem; text-align: center; background: var(--carte); border-radius: 28px; padding: 1.6rem 1.4rem 1.3rem;
+  box-shadow: 0 24px 60px rgba(36,27,79,.3); animation: fondu .25s ease; }
+.fenetre-rappel h2 { margin: 0; }
+.fenetre-rappel p { margin: 0; }
+.fenetre-rappel .bouton { width: 100%; margin-top: .4rem; }

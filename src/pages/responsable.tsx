@@ -13,6 +13,7 @@ import { MonArbre, Parcours } from '../components/arbre';
 import { conseilsIA, type ActionIA } from '../lib/ia';
 import { ORDRE_TRANCHES, TRANCHES } from '../data/reperes';
 import { FormEffectifs, activiteDuJour, total, useEffectifs } from './enfants';
+import { dateCourte, etatAutoeval } from '../lib/autoeval';
 
 const ETAPES = [
   ['Observer', 'Autoévaluation avec l’équipe'],
@@ -109,7 +110,8 @@ export function AccueilResponsable() {
       </section>
 
       <h2 className="titre-gestion">Ma garderie <small>faire progresser l’accueil, pour eux</small></h2>
-      {sc && <p className="score-gestion">Score de la dernière autoévaluation : <strong>{sc.global} %</strong>. Continuons à progresser ensemble.</p>}
+      {sc && <p className="score-gestion">Score de la dernière autoévaluation : <strong>{sc.global} %</strong>. Continuons à progresser ensemble.
+        {etatAutoeval(d).etat === 'fait' && <> Prochaine autoévaluation obligatoire avant le <strong>{dateCourte(etatAutoeval(d).limite)}</strong>.</>}</p>}
       {d.garderie?.valide === false && (
         <p className="bandeau-attente"><strong>Inscription en attente de validation.</strong> Vous pouvez déjà tout utiliser. La coordination de la commune validera votre garderie pour l’inclure dans le suivi communal.</p>
       )}
